@@ -12,7 +12,7 @@ theory T:V{
     reaches(begin,dest).
     //x,y is in edgeOnPath if there is a direct edge between x and y
     // reaches called between x and y
-    // if there exists an edge z between x and y then the reaches can be written
+    // if there exists a node z between x and y then the reaches can be written
     !x y:edgeOnPath(x,y)=>edge(x,y).
     {       
         !x y:reaches(x,y) <- edgeOnPath(x,y) | edgeOnPath(y,x).
