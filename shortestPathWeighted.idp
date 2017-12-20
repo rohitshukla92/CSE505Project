@@ -1,0 +1,50 @@
+vocabulary V{
+    type node //define the type node
+    type weight isa int //defines the weight of each edge 
+    partial edge(node,node):weight //defines the edge between two nodes
+    partial edgeOnPath(node,node):weight //defines the edges on path 
+    begin:node //from node
+    dest:node //destination node
+    reaches(node,node) //defines a path from x to y in path in the edgeOnPath
+}
+
+theory T:V{
+    //funtion called for begin and dest of the graph 
+    reaches(begin,dest). 
+    //x,y is in edgeOnPath if there is a direct edge between x and y 
+    //if a node z exists between x and z then reaches will be defined as 
+    !x y d:edgeOnPath(x,y)=d=>edge(x,y)=d.
+    {       
+        !x y:reaches(x,y)<- ?d:edgeOnPath(x,y)=d | edgeOnPath(y,x)=d.
+        !x y:reaches(x,y)<- ?z: reaches(x,z) & reaches(z,y).
+    }
+}
+
+structure S:V{
+    //Input in the program 
+    //Number of nodes are 26
+    //Edges generated are randomly through the python script 
+    node= {A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z}
+    edge={('U', 'T', 1); ('S', 'N', 2); ('E', 'A', 4); ('O', 'J', 5); ('E', 'X', 5); ('W', 'L', 5); ('G', 'Z', 3); ('X', 'W', 4); ('A', 'H', 2); ('R', 'Y', 1); ('R', 'Q', 4); ('N', 'A', 1); ('G', 'F', 1); ('B', 'R', 1); ('Y', 'P', 4); ('U', 'R', 4); ('R', 'T', 4); ('L', 'Y', 1); ('Y', 'H', 3); ('N', 'P', 1)}
+    //begin and destination of the graph
+    begin=L
+    dest=Y
+}
+
+term shortestPathLength:V{
+    //In this problem the shortestPathLength is the shortest path after summing the edgeOnPaths from begin to destination
+    sum{x,y,d:edgeOnPath(x,y)=d:d}
+}
+
+procedure main(){
+    //Searching a minimal model 
+    //main() invokes the minimization of model 
+    shortestPath= minimize(T,S,shortestPathLength)[1]
+    //[1] return atmost one solution 
+    //if no shortest path exists return nill
+    //else print the solution 
+    if(shortestPath==nill)
+    then print("No model exists\n")
+    else print(shortestPath)
+    end
+}
