@@ -1,0 +1,44 @@
+/Vocabulary of the program
+vocabulary V {
+type node //defined the type node 
+beg:node //defines the beginning node
+dest:node //defines the ending node
+edge(node,node) //it defines the edge between two nodes
+edgeOnPath(node,node) //it defines the edges included in the shortest path 
+reachable(node) //function to check if a given node is reachable 
+}
+
+theory T : V {
+{    
+//called the fucntion reachable with the beginning
+reachable(beg).
+reachable(y)<-edgeOnPath(x,y) & reachable(x). }
+//Used reachable unary function inplace of reaches(x,y)
+! x[node] y[node]:edgeOnPath(x,y)=>edge(x,y). // ( 1 )
+reachable(dest). // ( 2 )
+~(? x : edgeOnPath(x,beg))&~(?x:edgeOnPath(dest,x)) . // ( 3 )
+! x :(?<2 y :edgeOnPath(y,x)) &
+(?<2 y : edgeOnPath(x,y)). // ( 4 )
+! x y : edgeOnPath(x,y)=>reachable(y) . // ( 5 )
+}
+
+
+//The input for the program is given here
+structure S : V {
+node ={A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z} 
+edge = {('R', 'P'); ('Z', 'W'); ('U', 'F'); ('N', 'M'); ('Q', 'K'); ('C', 'S'); ('C', 'U'); ('H', 'O'); ('L', 'B'); ('J', 'U'); ('H', 'E'); ('N', 'H'); ('Y', 'I'); ('P', 'Z'); ('Y', 'W'); ('A', 'V'); ('S', 'C'); ('C', 'L'); ('V', 'M'); ('X', 'T')} 
+beg = R
+dest= Z
+}
+//lengthOfPath contains the aggregate of all the tuples in the path from source to destination 
+term lengthOfPath : V { #{ x y : edgeOnPath ( x , y ) } }
+
+procedure main(){
+//main invokes the minimize function to get the minimum number of tuples in the path from source to destination 
+minimumPath=minimize(T,S,lengthOfPath)[1]
+//If the solution for the minimumpath is null then no model exist
+if ( minimumPath == nil )
+then print ("No models exist" )
+else print (minimumPath) 
+end
+}
