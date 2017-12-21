@@ -1,0 +1,27 @@
+Input for the algorithms with constraint on the degree of the node:
+
+Every node must have less than two incoming edges and less than two outgoing edges.
+
+
+This is the default input given for the problem in the paper:
+
+node=[A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z]
+edge=[A,B;B,C;C,D;A,D]
+beg =A
+end =D
+
+
+Inputs for algorithms without constraint 
+
+Run the script graphGen.py: It generates random graphs with random edges which are chosen randomly from the nodes provided.
+
+The test cases were run for nodes=26(A-Z) , nodes=100('1'-'100')  
+
+The input generated needs to be copied in the structure S of each program. Along with that the user needs to provide  the starting node and the destination node between which the distance is to be calculated.
+
+The editor once setup allows the user to run the program and displays the result on the right side with edgeOnPath containing all the edges which are in shortest path from the source to the destination.
+
+
+Three programs are with constraint on degree of nodes and rest two which are an extension to the algorithm of the paper are with out constraint on the degree of a particular node.
+
+Instruction for installing IDP and running it on the docker are mentioned in the README file.
