@@ -1,37 +1,47 @@
-vocabulary sp_voc {
+
+//Better time complexity of O(e*n) as compared to 0(n3) in the constraint problem 
+//Vocabulary for the program
+vocabulary V {
 type node
-from :node
-to : node
+beg :node
+end : node
 edge(node,node)
 edgeOnPath(node,node)
 reaches(node,node)
 }
 
-theory sp_theory1 : sp_voc {
-{ ! x y : reaches(x ,y)<-edgeOnPath ( x , y ) .
-! x y z : reaches(x,y) <- reaches ( x , z ) & reaches ( z , y ) . }
+//Theory for the program
+//In this algorithm the x y z term has been removed so less recursive calls
+theory T : V {
+{!x y :  reaches(x ,y)<-edgeOnPath ( x , y ) .
+ !x y z : reaches(x,y) <- reaches ( x , z ) & reaches ( z , y ) . }
 
 ! x [ node ] y [ node ] : edgeOnPath ( x , y ) => edge ( x , y ) . // ( 1 )
-reaches ( from , to ) . // ( 2 )
-~(? x : edgeOnPath ( x , from ) ) & ~(? x : edgeOnPath ( to , x ) ) . // ( 3 )
+reaches (beg ,end) . // ( 2 )
+~(? x : edgeOnPath ( x , beg)) & ~(? x : edgeOnPath ( end , x ) ) . // ( 3 )
 
 ! x : (?<2 y : edgeOnPath ( y , x ) ) &
 (?<2 y : edgeOnPath ( x , y ) ) . // ( 4 )
-! x y : edgeOnPath ( x , y ) => reaches ( from , y ) . // ( 5 )
+! x y : edgeOnPath ( x , y ) => reaches ( beg , y ) . // ( 5 )
 }
-structure sp_struct : sp_voc {
+
+//Structure defining the input of the program
+structure S : V {
 node = {A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z} 
-edge = {('T', 'Q'); ('L', 'Q'); ('D', 'F'); ('N', 'B'); ('N', 'S'); ('J', 'B'); ('H', 'O'); ('C', 'F'); ('N', 'A');('N', 'O'); ('Q', 'E'); ('Z', 'H'); ('W', 'Y'); ('P', 'T'); ('F', 'J'); ('S', 'F'); ('C', 'V'); ('D', 'P'); ('D', 'F'); ('W', 'F')}  
-from = A
-to = C
+edge = {('T', 'Q'); ('L', 'Q'); ('D', 'F'); ('N', 'B'); ('N', 'S'); ('J', 'B'); ('H', 'O'); ('C', 'F'); ('N', 'A');('N', 'O'); ('Q', 'E'); ('Z', 'H'); ('W', 'Y'); ('P', 'T'); ('F', 'J'); ('S', 'F'); ('C', 'V'); ('D', 'P'); ('D', 'F'); ('W', 'F')} // 
+beg=T
+end=E
 }
-term lengthOfPath : sp_voc { #{ x y : edgeOnPath ( x , y ) } }
+//Term for the program which defines the lengthOfPath
+term lengthOfPath : V { #{ x y : edgeOnPath ( x , y ) } }
 
+//Main procedure for the program
 procedure main(){
-
-sol=minimize(sp_theory1,sp_struct,lengthOfPath)[1]
-if ( sol == nil )
-then print ("No models exist . \ n " )
-else print(sol )
+//Calculate the shortest path aggregate of tuples in the shortest path
+shortestPath=minimize(T,S,lengthOfPath)[1]
+//if shortest path is null
+if ( shortestPath == nil )
+then print ("No models exist . \ n " ) 
+else print(shortestPath )
 end
 }
