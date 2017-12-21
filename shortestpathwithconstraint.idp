@@ -1,0 +1,37 @@
+vocabulary sp_voc {
+type node
+from :node
+to : node
+edge(node,node)
+edgeOnPath(node,node)
+reaches(node,node)
+}
+
+theory sp_theory1 : sp_voc {
+{ ! x y : reaches(x ,y)<-edgeOnPath ( x , y ) .
+! x y z : reaches(x,y) <- reaches ( x , z ) & reaches ( z , y ) . }
+
+! x [ node ] y [ node ] : edgeOnPath ( x , y ) => edge ( x , y ) . // ( 1 )
+reaches ( from , to ) . // ( 2 )
+~(? x : edgeOnPath ( x , from ) ) & ~(? x : edgeOnPath ( to , x ) ) . // ( 3 )
+
+! x : (?<2 y : edgeOnPath ( y , x ) ) &
+(?<2 y : edgeOnPath ( x , y ) ) . // ( 4 )
+! x y : edgeOnPath ( x , y ) => reaches ( from , y ) . // ( 5 )
+}
+structure sp_struct : sp_voc {
+node = {A;B;C;D;E;F;G;H;I;J;K;L;M;N;O;P;Q;R;S;T;U;V;W;X;Y;Z} 
+edge = {('T', 'Q'); ('L', 'Q'); ('D', 'F'); ('N', 'B'); ('N', 'S'); ('J', 'B'); ('H', 'O'); ('C', 'F'); ('N', 'A');('N', 'O'); ('Q', 'E'); ('Z', 'H'); ('W', 'Y'); ('P', 'T'); ('F', 'J'); ('S', 'F'); ('C', 'V'); ('D', 'P'); ('D', 'F'); ('W', 'F')}  
+from = A
+to = C
+}
+term lengthOfPath : sp_voc { #{ x y : edgeOnPath ( x , y ) } }
+
+procedure main(){
+
+sol=minimize(sp_theory1,sp_struct,lengthOfPath)[1]
+if ( sol == nil )
+then print ("No models exist . \ n " )
+else print(sol )
+end
+}
